@@ -1,0 +1,33 @@
+{{- if .Values.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+spec:
+  activeDeadlineSeconds: 180
+  backoffLimit: 10
+  template:
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-{{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+        envFrom:
+        {{- include "myk8schart.secretProvider" . | nindent 8 }}
+
+        env:
+        {{- if .Values.env }}
+        {{- range .Values.env }}
+        - name: {{ .name | quote }}
+          value: {{ .value | quote }}
+        {{- end }}
+        {{- end }}
+        
+        volumeMounts:
+        {{- include "myk8schart.secretProviderVolumeMount" . | nindent 8 }}
+
+      restartPolicy: Never
+      volumes:
+      {{- include "myk8schart.secretProviderVolume" . | nindent 6 }}
+{{- end }}

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-{{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-{{ .Chart.Name }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-{{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+        envFrom:
+        {{- include "myk8schart.secretProvider" . | nindent 8 }}
+
+        env:
+        {{- if .Values.env }}
+        {{- range .Values.env }}
+        - name: {{ .name | quote }}
+          value: {{ .value | quote }}
+        {{- end }}
+        {{- end }}
+
+        volumeMounts:
+        {{- include "myk8schart.secretProviderVolumeMount" . | nindent 8 }}
+      
+      volumes:
+      {{- include "myk8schart.secretProviderVolume" . | nindent 6 }}

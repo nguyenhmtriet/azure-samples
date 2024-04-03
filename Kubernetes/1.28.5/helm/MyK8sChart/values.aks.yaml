@@ -1,0 +1,271 @@
+# Default values for myk8schart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+blazor:
+  image:
+    repository: mycontainerregistry.azurecr.io/myk8schart-blazor
+    tag: latest
+    pullPolicy: Always
+  ingress:
+    enabled: true
+    host: test1.decisiontree.tech
+    tlsSecret: null
+  env:
+    - name: "ASPNETCORE_ENVIRONMENT"
+      value: "k8s"
+    - name: "ASPNETCORE_HTTP_PORTS"
+      value: "80"
+    - name: "App__SelfUrl"
+      value: "https://test1.decisiontree.tech"
+    - name: "App__DisablePII"
+      value: "false"
+    - name: "RemoteServices__Default__BaseUrl"
+      value: "http://test-api/"
+    - name: "RemoteServices__AbpAccountPublic__BaseUrl"
+      value: "http://test-auth/"
+    - name: "AuthServer__Authority"
+      value: "https://auth.test1.decisiontree.tech"
+    - name: "AuthServer__MetaAddress"
+      value: "http://test-auth"
+    - name: "AuthServer__RequireHttpsMetadata"
+      value: "false"
+    - name: "AuthServer__ClientId"
+      value: "BlazorK8S"
+    - name: "AuthServer__ClientSecret"
+      value: "1q2w3e*"
+    - name: "AuthServer__IsContainerizedOnLocalhost"
+      value: "true"
+    - name: "Serilog__MinimumLevel__Default"
+      value: "Verbose"
+    # - name: "Serilog__MinimumLevel__Override__System"
+    #   value: "Verbose"
+    # - name: "Serilog__MinimumLevel__Override__Microsoft"
+    #   value: "Verbose"
+    # - name: "Serilog__MinimumLevel__Override__Microsoft.EntityFrameworkCore"
+    #   value: "Verbose"
+
+auth:
+  image:
+    repository: mycontainerregistry.azurecr.io/myk8schart-authserver
+    tag: latest
+    pullPolicy: Always
+  ingress:
+    enabled: true
+    host: auth.test1.decisiontree.tech
+    tlsSecret: null
+  env:
+    - name: "ASPNETCORE_ENVIRONMENT"
+      value: "k8s"
+    - name: "ASPNETCORE_HTTP_PORTS"
+      value: "80"
+    - name: "App__SelfUrl"
+      value: "https://auth.test1.decisiontree.tech"
+    - name: "App__CorsOrigins"
+      value: "https://api.test1.decisiontree.tech,https://test1.decisiontree.tech,http://test-api,http://test-blazor"
+    - name: "App__RedirectAllowedUrls"
+      value: "https://test1.decisiontree.tech,http://test-blazor"
+    - name: "App__DisablePII"
+      value: "false"
+    - name: "AuthServer__Authority"
+      value: "https://auth.test1.decisiontree.tech"
+    - name: "AuthServer__MetaAddress"
+      value: "http://test-auth"
+    - name: "AuthServer__RequireHttpsMetadata"
+      value: "false"
+    - name: "SigningCertificate__FileCertPath"
+      value: "myk8schart-local.crt"
+    - name: "SigningCertificate__FileKeyPath"
+      value: "myk8schart-local.key"
+    - name: "Serilog__MinimumLevel__Default"
+      value: "Verbose"
+    - name: "Serilog__MinimumLevel__Override__System"
+      value: "Verbose"
+    - name: "Serilog__MinimumLevel__Override__Microsoft"
+      value: "Verbose"
+    - name: "Serilog__MinimumLevel__Override__Microsoft.EntityFrameworkCore"
+      value: "Verbose"
+
+api:
+  image:
+    repository: mycontainerregistry.azurecr.io/myk8schart-api
+    tag: latest
+    pullPolicy: Always
+  ingress:
+    enabled: true
+    host: api.test1.decisiontree.tech
+    tlsSecret: null
+  env:
+    - name: "ASPNETCORE_ENVIRONMENT"
+      value: "k8s"
+    - name: "ASPNETCORE_HTTP_PORTS"
+      value: "80"
+    - name: "App__SelfUrl"
+      value: "https://api.test1.decisiontree.tech"
+    - name: "App__CorsOrigins"
+      value: "https://test1.decisiontree.tech,http://test-blazor"
+    - name: "App__HealthCheckUrl"
+      value: "/health-status"
+    - name: "App__HealthCheckScheme"
+      value: "http"
+    - name: "AuthServer__Authority"
+      value: "https://auth.test1.decisiontree.tech"
+    - name: "AuthServer__MetaAddress"
+      value: "http://test-auth"
+    - name: "AuthServer__RequireHttpsMetadata"
+      value: "false"
+    - name: "AuthServer__SwaggerClientId"
+      value: "SwaggerK8S"
+    - name: "Serilog__MinimumLevel__Default"
+      value: "Verbose"
+
+dbmigrator:
+  enabled: false
+  image:
+    repository: mycontainerregistry.azurecr.io/myk8schart-db-migrator
+    tag: latest
+    pullPolicy: Always
+  env:
+    - name: "OpenIddict__Applications__BlazorServerTiered__ClientId"
+      value: "BlazorK8S"
+    - name: "OpenIddict__Applications__BlazorServerTiered__ClientSecret"
+      value: "1q2w3e*"
+    - name: "OpenIddict__Applications__BlazorServerTiered__RootUrl"
+      value: "https://test1.decisiontree.tech"
+    - name: "OpenIddict__Applications__Swagger__ClientId"
+      value: "SwaggerK8S"
+    - name: "OpenIddict__Applications__Swagger__RootUrl"
+      value: "https://api.test1.decisiontree.tech"
+
+sqlserver:
+  externalName: <your_fqdn_sqldatabase>
+  port: 1433
+
+redis:
+  externalName: <your_fqdn_redis_cache>
+  port: 6380
+
+secrets:
+  enabledAzureKeyVault: true
+  azureKeyVault:
+    name: # must be provided
+    userAssignedManagedIdentity: # must be provided
+    tenantId: # must be provided
+    secrets:
+    - name: "ApplicationInsightsKey"
+      alias: "APPINSIGHTS_INSTRUMENTATIONKEY"
+    - name: "SqlServerConnectionString"
+      alias: "ConnectionStrings__Default"
+    - name: "RedisCacheConnectionString"
+      alias: "Redis__Configuration"
+  enabledTlsSecret: false
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+global:
+  enabledAzureKeyVault: true
+  ingress:
+    className: "azure-application-gateway"
+    port: 80
+    annotations:
+      appgw.ingress.kubernetes.io/appgw-ssl-certificate: "<your_hostname_matching_SSL_certificate>-appGwSsl" # must matched with certificateName parameter in AppGateway bicep
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+

@@ -1,0 +1,1 @@
+helm upgrade --install test MyK8sChart --namespace myk8schart-local --create-namespace -f .\MyK8sChart\values.yaml
