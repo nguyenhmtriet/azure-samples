@@ -111,7 +111,27 @@ resource appGateway 'Microsoft.Network/applicationGateways@2023-09-01' = {
     listeners: []
     urlPathMaps: []
     routingRules: []
-    rewriteRuleSets: []
+    rewriteRuleSets: [
+      {
+        name: 'IngressRewriteSet'
+        properties: {
+          rewriteRules: [
+            {
+              name: 'FromIngressRule'
+              ruleSequence: 100
+              actionSet: {
+                requestHeaderConfigurations: [
+                  {
+                    headerName: 'from-ingress'
+                    headerValue: 'true'
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
     privateLinkConfigurations: []
     gatewayIPConfigurations: [
       {

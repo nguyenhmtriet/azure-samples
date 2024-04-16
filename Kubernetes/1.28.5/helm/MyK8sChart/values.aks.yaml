@@ -17,7 +17,7 @@ blazor:
     pullPolicy: Always
   ingress:
     enabled: true
-    host: test1.decisiontree.tech
+    host: myk8schartproduction.com
     tlsSecret: null
   env:
     - name: "ASPNETCORE_ENVIRONMENT"
@@ -25,7 +25,7 @@ blazor:
     - name: "ASPNETCORE_HTTP_PORTS"
       value: "80"
     - name: "App__SelfUrl"
-      value: "https://test1.decisiontree.tech"
+      value: "https://myk8schartproduction.com"
     - name: "App__DisablePII"
       value: "false"
     - name: "RemoteServices__Default__BaseUrl"
@@ -33,7 +33,7 @@ blazor:
     - name: "RemoteServices__AbpAccountPublic__BaseUrl"
       value: "http://test-auth/"
     - name: "AuthServer__Authority"
-      value: "https://auth.test1.decisiontree.tech"
+      value: "https://auth.myk8schartproduction.com"
     - name: "AuthServer__MetaAddress"
       value: "http://test-auth"
     - name: "AuthServer__RequireHttpsMetadata"
@@ -60,7 +60,7 @@ auth:
     pullPolicy: Always
   ingress:
     enabled: true
-    host: auth.test1.decisiontree.tech
+    host: auth.myk8schartproduction.com
     tlsSecret: null
   env:
     - name: "ASPNETCORE_ENVIRONMENT"
@@ -68,15 +68,15 @@ auth:
     - name: "ASPNETCORE_HTTP_PORTS"
       value: "80"
     - name: "App__SelfUrl"
-      value: "https://auth.test1.decisiontree.tech"
+      value: "https://auth.myk8schartproduction.com"
     - name: "App__CorsOrigins"
-      value: "https://api.test1.decisiontree.tech,https://test1.decisiontree.tech,http://test-api,http://test-blazor"
+      value: "https://api.myk8schartproduction.com,https://myk8schartproduction.com,http://test-api,http://test-blazor"
     - name: "App__RedirectAllowedUrls"
-      value: "https://test1.decisiontree.tech,http://test-blazor"
+      value: "https://myk8schartproduction.com,http://test-blazor"
     - name: "App__DisablePII"
       value: "false"
     - name: "AuthServer__Authority"
-      value: "https://auth.test1.decisiontree.tech"
+      value: "https://auth.myk8schartproduction.com"
     - name: "AuthServer__MetaAddress"
       value: "http://test-auth"
     - name: "AuthServer__RequireHttpsMetadata"
@@ -101,7 +101,7 @@ api:
     pullPolicy: Always
   ingress:
     enabled: true
-    host: api.test1.decisiontree.tech
+    host: api.myk8schartproduction.com
     tlsSecret: null
   env:
     - name: "ASPNETCORE_ENVIRONMENT"
@@ -109,15 +109,15 @@ api:
     - name: "ASPNETCORE_HTTP_PORTS"
       value: "80"
     - name: "App__SelfUrl"
-      value: "https://api.test1.decisiontree.tech"
+      value: "https://api.myk8schartproduction.com"
     - name: "App__CorsOrigins"
-      value: "https://test1.decisiontree.tech,http://test-blazor"
+      value: "https://myk8schartproduction.com,http://test-blazor"
     - name: "App__HealthCheckUrl"
       value: "/health-status"
     - name: "App__HealthCheckScheme"
       value: "http"
     - name: "AuthServer__Authority"
-      value: "https://auth.test1.decisiontree.tech"
+      value: "https://auth.myk8schartproduction.com"
     - name: "AuthServer__MetaAddress"
       value: "http://test-auth"
     - name: "AuthServer__RequireHttpsMetadata"
@@ -139,11 +139,11 @@ dbmigrator:
     - name: "OpenIddict__Applications__BlazorServerTiered__ClientSecret"
       value: "1q2w3e*"
     - name: "OpenIddict__Applications__BlazorServerTiered__RootUrl"
-      value: "https://test1.decisiontree.tech"
+      value: "https://myk8schartproduction.com"
     - name: "OpenIddict__Applications__Swagger__ClientId"
       value: "SwaggerK8S"
     - name: "OpenIddict__Applications__Swagger__RootUrl"
-      value: "https://api.test1.decisiontree.tech"
+      value: "https://api.myk8schartproduction.com"
 
 sqlserver:
   externalName: <your_fqdn_sqldatabase>
@@ -266,6 +266,7 @@ global:
     port: 80
     annotations:
       appgw.ingress.kubernetes.io/appgw-ssl-certificate: "<your_hostname_matching_SSL_certificate>-appGwSsl" # must matched with certificateName parameter in AppGateway bicep
+      appgw.ingress.kubernetes.io/rewrite-rule-set: "IngressRewriteSet" # refer to the name of rewriteRuleSets in Kubernetes\1.28.5\infra\appGateway\appGateway.bicep
       nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
       nginx.ingress.kubernetes.io/ssl-redirect: "false"
 
